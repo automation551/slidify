@@ -1,0 +1,48 @@
+#!/bin/bash
+#+
+# Makes a movie out of a still frame that can be put onto a DVD-Video disc.
+#
+# Written 2010 March 7 by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+#-
+
+video_format=pal
+duration=1.0
+audio_sample_rate=48000 # mustn't be changed
+audio_channels=1 # probably not worth changing
+
+for ((;;)); do
+	if [ "${1:0:2}" != "--" ]; then
+		break
+	fi
+	opt="${1:2:${#1}}"
+	shift
+	val="${opt#*=}"
+	opt="${opt%%=*}"
+	if [ "$opt" = "duration" ]; then
+		duration="$val"
+	elif [ "$opt" = "format" ]; then
+		video_format="$val"
+		if [ "$video_format" != "pal" -a "$video_format" != "ntsc" ]; then
+			echo "bad video format $video_format" 1>&2
+			exit 3
+		fi
+	else
+		echo "bad option $opt" 1>&2
+		exit 3
+	fi
+done
+if [ $# != 2 ]; then
+	echo $'Usage:\n\t'"$0"$' [--duration=seconds] [--format=pal|ntsc] <instillframe> <outmovie>\n' 1>&2
+	exit 3
+fi
+infile="$1"
+outfile="$2"
+
+ffmpeg -loop_input -t $duration -i "$infile" \
+	-ar $audio_sample_rate -ac $audio_channels -f s16le \
+		-i <(dd \
+			if=/dev/zero count=1 \
+			bs=$(bc <<<"scale = 0; $audio_sample_rate * $audio_channels * $duration * 2 / 1")
+			  # division is necessary to trigger use of scale
+		) \
+	-target ${video_format}-dvd "$outfile"
