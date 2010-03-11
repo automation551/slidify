@@ -1,8 +1,17 @@
 #!/bin/bash
 #+
-# Makes a movie out of a still frame that can be put onto a DVD-Video disc.
+# Makes a movie out of a still frame that can be put onto a DVD-Video disc. Invoke this
+# script as follows:
 #
-# Written 2010 March 7 by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+#     slidify [--duration=seconds] [--format=pal|ntsc] infile outfile
+#
+# where infile is the name of the input graphic in any still-image format that FFmpeg
+# will understand, and outfile is the name of the MPEG file to create. If not specified,
+# the output duration will be 1 second and the output video format will be PAL.
+#
+# External programs needed: ffmpeg, dd, bc.
+#
+# Written by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
 #-
 
 video_format=pal
