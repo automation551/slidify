@@ -3,18 +3,22 @@
 # Makes a movie out of a still frame that can be put onto a DVD-Video disc. Invoke this
 # script as follows:
 #
-#     slidify [--duration=seconds] [--format=pal|ntsc] infile outfile
+#     slidify [--duration=seconds] [--format=pal|ntsc] [--widescreen] infile outfile
 #
 # where infile is the name of the input graphic in any still-image format that FFmpeg
 # will understand, and outfile is the name of the MPEG file to create. If not specified,
 # the output duration will be 1 second and the output video format will be PAL.
+# The aspect ratio of the input image will be preserved, with borders added as necessary
+# to make up the output aspect ratio (16:9 or 4:3, depending on whether --widescreen is
+# specified or not).
 #
-# External programs needed: ffmpeg, dd, bc.
+# External programs needed: ImageMagick, FFmpeg, Perl, dd, bc.
 #
 # Written by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
 #-
 
 video_format=pal
+widescreen=0
 duration=1.0
 audio_sample_rate=48000 # mustn't be changed
 audio_channels=1 # probably not worth changing
@@ -35,19 +39,42 @@ for ((;;)); do
 			echo "bad video format $video_format" 1>&2
 			exit 3
 		fi
+	elif [ "$opt" = "widescreen" ]; then
+		widescreen=1
 	else
 		echo "bad option $opt" 1>&2
 		exit 3
 	fi
 done
 if [ $# != 2 ]; then
-	echo $'Usage:\n\t'"$0"$' [--duration=seconds] [--format=pal|ntsc] <instillframe> <outmovie>\n' 1>&2
+	echo $'Usage:\n\t'"$0"$' [--duration=seconds] [--format=pal|ntsc] [--widescreen] <instillframe> <outmovie>\n' 1>&2
 	exit 3
 fi
+
+if [ $widescreen != "0" ]; then
+	frame_width=1024
+	frame_height=576
+else
+	frame_width=768
+	frame_height=576
+fi
+frame_size=${frame_width}x${frame_height}
 infile="$1"
 outfile="$2"
+src_frame_size=$(
+	identify -verbose <(convert -resize $frame_size "$infile" jpeg:/dev/stdout) |
+	perl -lne '/Geometry\:\s+(\d+)x(\d+)/ && print "$1x$2";'
+)
+src_frame_width=${src_frame_size%x*}
+src_frame_height=${src_frame_size#*x}
+if [ $(($frame_width - $src_frame_width > 0)) != 0 -o $(($frame_height - $src_frame_height > 0)) != 0 ]; then
+	reframe="-frame $(($(($frame_width - $src_frame_width)) / 2))x$(($(($frame_height - $src_frame_height)) / 2))"
+else
+	reframe=
+fi
 
-ffmpeg -loop_input -t $duration -i "$infile" \
+ffmpeg -loop_input -t $duration -f mjpeg \
+	-i <(convert "$infile" -resize $frame_size $reframe jpeg:/dev/stdout) \
 	-ar $audio_sample_rate -ac $audio_channels -f s16le \
 		-i <(dd \
 			if=/dev/zero count=1 \
