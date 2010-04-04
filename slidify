@@ -117,6 +117,11 @@ if [ -e "$outfile" -a \( -b "$outfile" -o -c "$outfile" -o -p "$outfile" \) ] ; 
 else
 	overwrite=
 fi
+if [ $widescreen != "0" ]; then
+	aspect=16:9
+else
+	aspect=4:3
+fi
 ffmpeg -loop_input -t $duration -f mjpeg \
 	-i <(convert $src -resize $frame_size $reframe jpeg:/dev/stdout) \
 	-ar $audio_sample_rate -ac $audio_channels -f s16le \
@@ -125,4 +130,4 @@ ffmpeg -loop_input -t $duration -f mjpeg \
 			bs=$(bc <<<"scale = 0; $audio_sample_rate * $audio_channels * $duration * 2 / 1")
 			  # division is necessary to trigger use of scale
 		) \
-	-target ${video_format}-dvd $overwrite "$outfile"
+	-target ${video_format}-dvd -aspect $aspect $overwrite "$outfile"
