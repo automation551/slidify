@@ -112,7 +112,7 @@ if [ "$magicksrc" != "" ]; then
 else
 	src=$(printf %q "$infile")
 fi
-if [ -e "$outfile" -a \( -b "$outfile" -o -c "$outfile" -o -p "$outfile" \) ] ; then
+if [ -e "$outfile" -a \( -c "$outfile" -o -p "$outfile" \) ] ; then
 	overwrite=-y
 else
 	overwrite=
