@@ -1,4 +1,4 @@
-<!doctype book PUBLIC "-//OASIS//DTD DocBook V4.1//EN"
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN"
 	"http://www.oasis-open.org/docbook/xml/4.1/docbookx.dtd">
 <book><title>slidify</title>
 <reference id="manpages"><title>Slidify Man Page</title>
@@ -19,7 +19,7 @@
 <cmdsynopsis>
 <command>slidify</command>
 <arg><replaceable>options ...</replaceable></arg>
-<arg choice="req"<replaceable>infile</replaceable></arg>
+<arg choice="req"><replaceable>infile</replaceable></arg>
 <arg choice="req"><replaceable>outfile</replaceable></arg>
 </cmdsynopsis>
 <cmdsynopsis>
@@ -61,6 +61,7 @@ defaults to PAL.</para></listitem></varlistentry>
 
 <para>The aspect ratio of the input image will be preserved, with borders added as
 necessary to make up the output aspect ratio.
+</para>
 
 </refsect1>
 
@@ -100,8 +101,17 @@ the top to blue at the bottom.
 <term>&lt;http://www.imagemagick.org/script/color.php&gt;</term>
 <listitem><para>the different ways that ImageMagick allows you to specify colours</para>
 </listitem>
+</varlistentry>
 
 </variablelist>
+
+</refsect1>
+
+<refsect1><title>Author</title>
+
+<para>
+Lawrence D'Oliveiro &lt;ldo@geek-central.gen.nz&gt;
+</para>
 
 </refsect1>
 
