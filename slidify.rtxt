@@ -1,0 +1,70 @@
+.. Process this through Docutils <http://docutils.sourceforge.net/>. For
+   example, the Docutils rst2man command will generate a man page.
+
+:title: slidify
+:title_upper: SLIDIFY 1
+:subtitle: generate still-frame DVD-Video movies
+:date: 2011 May 15
+:version: 0.1
+:author: Lawrence D'Oliveiro <ldo@geek-central.gen.nz>
+
+Synopsis
+########
+
+|  slidify *options* ... *infile* *outfile*
+|  slidify *options* ... --magicksrc=\ *magicksrc* *outfile*
+
+Description
+###########
+
+**slidify** lets you convert a single still-frame image to a movie that
+can, for example, be included as part of a DVD-Video slide show, or used as the
+background for a DVD-Video menu.
+
+Command-line options are as follows:
+
+--magicksrc=\ *magicksrc*
+    If present, then instead of an input file, the source will be one of the
+    built-in images provided by ImageMagick.
+
+--duration=\ *seconds*
+    Specifies the duration of the output movie to create. Fractions of a second
+    are allowed. If omitted, defaults to 1.0.
+
+--format=pal|ntsc
+    Specifies the format of the output movie, either PAL or NTSC. If omitted,
+    defaults to PAL.
+
+--widescreen
+    If present, specifies that the aspect ratio of the output movie should be
+    16:9. If omitted, it will be 4:3.
+
+The aspect ratio of the input image will be preserved, with borders added as
+necessary to make up the output aspect ratio.
+
+Examples
+########
+
+    slidify --duration=2.5 frame.jpg frame.mpg
+
+generates a PAL-format movie frame.mpg of duration 2.5 seconds
+from the image file frame.jpg.
+
+    slidify --magicksrc=xc:yellow --format=ntsc yellow.mpg
+
+generates a 1-second NTSC-format movie consisting of a frame filled with solid yellow.
+
+    slidify --magicksrc=gradient:'hsb(33%,50%,50%)-hsb(66%,50%,100%)' --widescreen gradient.mpg
+
+generates a widescreen movie consisting of a linear gradient going from jade green at
+the top to blue at the bottom.
+
+See Also
+########
+
+<http://www.imagemagick.org/script/formats.php#builtin-images>
+    allowable forms for *magicksrc*
+
+<http://www.imagemagick.org/script/color.php>
+    the different ways that ImageMagick allows you to specify colours
+
