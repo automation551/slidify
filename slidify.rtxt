@@ -1,4 +1,4 @@
-Slidify
+slidify
 =======
 
 generate still-frame DVD-Video movies
@@ -27,15 +27,15 @@ background for a DVD-Video menu.
 
 Command-line options are as follows:
 
---magicksrc=\ *magicksrc*
+--magicksrc=magicksrc
     If present, then instead of an input file, the source will be one of the
     built-in images provided by ImageMagick.
 
---duration=\ *seconds*
+--duration=seconds
     Specifies the duration of the output movie to create. Fractions of a second
     are allowed. If omitted, defaults to 1.0.
 
---format=pal|ntsc
+--format=format
     Specifies the format of the output movie, either PAL or NTSC. If omitted,
     defaults to PAL.
 
