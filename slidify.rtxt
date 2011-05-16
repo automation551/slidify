@@ -1,9 +1,13 @@
+Slidify
+=======
+
+generate still-frame DVD-Video movies
+*************************************
+
 .. Process this through Docutils <http://docutils.sourceforge.net/>. For
    example, the Docutils rst2man command will generate a man page.
 
-:title: slidify
 :title_upper: SLIDIFY 1
-:subtitle: generate still-frame DVD-Video movies
 :date: 2011 May 15
 :version: 0.1
 :author: Lawrence D'Oliveiro <ldo@geek-central.gen.nz>
