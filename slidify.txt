@@ -4,8 +4,9 @@ slidify
 generate still-frame DVD-Video movies
 *************************************
 
-.. Process this through Docutils <http://docutils.sourceforge.net/>. For
-   example, the Docutils rst2man command will generate a man page.
+.. This documentation file is perfectly readable as is. Or you can process it
+   through Docutils <http://docutils.sourceforge.net/> to generate a man page,
+   or an HTML page, or whatever.
 
 :title_upper: SLIDIFY 1
 :date: 2011 May 15
