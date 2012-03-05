@@ -125,7 +125,7 @@ if [ $widescreen != "0" ]; then
 else
 	aspect=4:3
 fi
-ffmpeg -loop_input -t $duration -f mjpeg \
+ffmpeg -t $duration -f mjpeg \
 	-i <(convert $src -resize $frame_size $reframe jpeg:/dev/stdout) \
 	-ar $audio_sample_rate -ac $audio_channels -f s16le \
 		-i <(dd \
