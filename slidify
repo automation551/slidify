@@ -43,94 +43,94 @@ audio_sample_rate=48000 # mustn't be changed
 audio_channels=1 # probably not worth changing
 magicksrc=
 for ((;;)); do
-	if [ "${1:0:2}" != "--" ]; then
-		break
-	fi
-	opt="${1:2:${#1}}"
-	shift
-	val="${opt#*=}"
-	opt="${opt%%=*}"
-	if [ "$opt" = "duration" ]; then
-		duration="$val"
-	elif [ "$opt" = "format" ]; then
-		video_format="$val"
-		if [ "$video_format" != "pal" -a "$video_format" != "ntsc" ]; then
-			echo "bad video format $video_format" 1>&2
-			exit 3
-		fi
-	elif [ "$opt" = "magicksrc" ]; then
-		magicksrc="$val"
-	elif [ "$opt" = "widescreen" ]; then
-		widescreen=1
-	else
-		echo "bad option $opt" 1>&2
-		exit 3
-	fi
+    if [ "${1:0:2}" != "--" ]; then
+        break
+    fi
+    opt="${1:2:${#1}}"
+    shift
+    val="${opt#*=}"
+    opt="${opt%%=*}"
+    if [ "$opt" = "duration" ]; then
+        duration="$val"
+    elif [ "$opt" = "format" ]; then
+        video_format="$val"
+        if [ "$video_format" != "pal" -a "$video_format" != "ntsc" ]; then
+            echo "bad video format $video_format" 1>&2
+            exit 3
+        fi
+    elif [ "$opt" = "magicksrc" ]; then
+        magicksrc="$val"
+    elif [ "$opt" = "widescreen" ]; then
+        widescreen=1
+    else
+        echo "bad option $opt" 1>&2
+        exit 3
+    fi
 done
 optsusage="[--duration=seconds] [--format=pal|ntsc] [--widescreen]"
 if [ "$magicksrc" != "" ]; then
-	if [ $# != 1 ]; then
-		echo $'Usage:\n\t'"$0 $optsusage"$' --magicksrc=magicksrc <outmovie>\n' 1>&2
-		exit 3
-	fi
-	outfile="$1"
+    if [ $# != 1 ]; then
+        echo $'Usage:\n\t'"$0 $optsusage"$' --magicksrc=magicksrc <outmovie>\n' 1>&2
+        exit 3
+    fi
+    outfile="$1"
 else 
-	if [ $# != 2 ]; then
-		echo $'Usage:\n\t'"$0 $optsusage"$' <instillframe> <outmovie>\n' 1>&2
-		exit 3
-	fi
-	infile="$1"
-	if [ "${infile:0:1}" != "/" -a "${infile#*:}" != "$infile" ]; then
-		infile="./$infile" # prevent interpretation as special ImageMagick source
-	fi
-	outfile="$2"
+    if [ $# != 2 ]; then
+        echo $'Usage:\n\t'"$0 $optsusage"$' <instillframe> <outmovie>\n' 1>&2
+        exit 3
+    fi
+    infile="$1"
+    if [ "${infile:0:1}" != "/" -a "${infile#*:}" != "$infile" ]; then
+        infile="./$infile" # prevent interpretation as special ImageMagick source
+    fi
+    outfile="$2"
 fi
 
 if [ $widescreen != "0" ]; then
-	frame_width=1024
-	frame_height=576
+    frame_width=1024
+    frame_height=576
 else
-	frame_width=768
-	frame_height=576
+    frame_width=768
+    frame_height=576
 fi
 frame_size=${frame_width}x${frame_height}
 if [ "$magicksrc" != "" ]; then
-	src_frame_size="$frame_size"
+    src_frame_size="$frame_size"
 else
-	src_frame_size=$(
-		identify -verbose <(convert -resize $frame_size "$infile" jpeg:/dev/stdout) |
-		perl -lne '/Geometry\:\s+(\d+)x(\d+)/ && print "$1x$2";'
-	)
+    src_frame_size=$(
+        identify -verbose <(convert -resize $frame_size "$infile" jpeg:/dev/stdout) |
+        perl -lne '/Geometry\:\s+(\d+)x(\d+)/ && print "$1x$2";'
+    )
 fi
 src_frame_width=${src_frame_size%x*}
 src_frame_height=${src_frame_size#*x}
 if [ $(($frame_width - $src_frame_width > 0)) != 0 -o $(($frame_height - $src_frame_height > 0)) != 0 ]; then
-	reframe="-frame $(($(($frame_width - $src_frame_width)) / 2))x$(($(($frame_height - $src_frame_height)) / 2))"
+    reframe="-frame $(($(($frame_width - $src_frame_width)) / 2))x$(($(($frame_height - $src_frame_height)) / 2))"
 else
-	reframe=
+    reframe=
 fi
 
 if [ "$magicksrc" != "" ]; then
-	src="-size $src_frame_size $magicksrc"
+    src="-size $src_frame_size $magicksrc"
 else
-	src=$(printf %q "$infile")
+    src=$(printf %q "$infile")
 fi
 if [ -e "$outfile" -a \( -c "$outfile" -o -p "$outfile" \) ] ; then
-	overwrite=-y
+    overwrite=-y
 else
-	overwrite=
+    overwrite=
 fi
 if [ $widescreen != "0" ]; then
-	aspect=16:9
+    aspect=16:9
 else
-	aspect=4:3
+    aspect=4:3
 fi
 ffmpeg -t $duration -f mjpeg \
-	-i <(convert $src -resize $frame_size $reframe jpeg:/dev/stdout) \
-	-ar $audio_sample_rate -ac $audio_channels -f s16le \
-		-i <(dd \
-			if=/dev/zero count=1 \
-			bs=$(bc <<<"scale = 0; $audio_sample_rate * $audio_channels * $duration * 2 / 1")
-			  # division is necessary to trigger use of scale
-		) \
-	-target ${video_format}-dvd -aspect $aspect $overwrite "$outfile"
+    -i <(convert $src -resize $frame_size $reframe jpeg:/dev/stdout) \
+    -ar $audio_sample_rate -ac $audio_channels -f s16le \
+        -i <(dd \
+            if=/dev/zero count=1 \
+            bs=$(bc <<<"scale = 0; $audio_sample_rate * $audio_channels * $duration * 2 / 1")
+              # division is necessary to trigger use of scale
+        ) \
+    -target ${video_format}-dvd -aspect $aspect $overwrite "$outfile"
