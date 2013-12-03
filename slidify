@@ -112,7 +112,9 @@ fi
 
 if [ "$magicksrc" != "" ]; then
     srci="-size $src_frame_size $magicksrc"
+	srcq=
 else
+	srci=
     srcq="$infile"
 fi
 if [ -e "$outfile" -a \( -c "$outfile" -o -p "$outfile" \) ] ; then
