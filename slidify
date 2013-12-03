@@ -111,9 +111,9 @@ else
 fi
 
 if [ "$magicksrc" != "" ]; then
-    src="-size $src_frame_size $magicksrc"
+    srci="-size $src_frame_size $magicksrc"
 else
-    src=$(printf %q "$infile")
+    srcq="$infile"
 fi
 if [ -e "$outfile" -a \( -c "$outfile" -o -p "$outfile" \) ] ; then
     overwrite=-y
@@ -126,7 +126,7 @@ else
     aspect=4:3
 fi
 ffmpeg -t $duration -f mjpeg \
-    -i <(convert $src -resize $frame_size $reframe jpeg:/dev/stdout) \
+    -i <(convert $srci"$srcq" -resize $frame_size $reframe jpeg:/dev/stdout) \
     -ar $audio_sample_rate -ac $audio_channels -f s16le \
         -i <(dd \
             if=/dev/zero count=1 \
