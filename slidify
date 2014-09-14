@@ -33,7 +33,8 @@
 #
 # External programs needed: ImageMagick, FFmpeg, Perl, dd, bc.
 #
-# Written by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+# Copyright 2010-2013 by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+# Licensed under CC-BY-SA <http://creativecommons.org/licenses/by-sa/4.0/>.
 #-
 
 video_format=pal
