@@ -75,7 +75,7 @@ if [ "$magicksrc" != "" ]; then
         exit 3
     fi
     outfile="$1"
-else 
+else
     if [ $# != 2 ]; then
         echo $'Usage:\n\t'"$0 $optsusage"$' <instillframe> <outmovie>\n' 1>&2
         exit 3
