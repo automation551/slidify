@@ -99,7 +99,7 @@ if [ "$magicksrc" != "" ]; then
     src_frame_size="$frame_size"
 else
     src_frame_size=$(
-        identify -verbose <(convert -resize $frame_size "$infile" jpeg:/dev/stdout) |
+        identify -verbose <(convert -resize $frame_size "$infile" jpeg:-) |
         perl -lne '/Geometry\:\s+(\d+)x(\d+)/ && print "$1x$2";'
     )
 fi
@@ -129,7 +129,7 @@ else
     aspect=4:3
 fi
 ffmpeg -t $duration -f mjpeg \
-    -i <(convert $srci"$srcq" -resize $frame_size $reframe jpeg:/dev/stdout) \
+    -i <(convert $srci"$srcq" -resize $frame_size $reframe jpeg:-) \
     -ar $audio_sample_rate -ac $audio_channels -f s16le \
         -i <(dd \
             if=/dev/zero count=1 \
